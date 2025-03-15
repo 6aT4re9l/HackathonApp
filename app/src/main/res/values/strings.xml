@@ -1,0 +1,19 @@
+<resources>
+    <string name="app_name">HackatoonApp</string>
+
+    <!--Экран регистрации-->
+    <string name="registerTitle">Регистарция</string>
+    <string name="firstNameHint">Имя</string>
+    <string name="lastNameHint">Фамилия</string>
+    <string name="EmailHint">Введите ваш E-mail</string>
+    <string name="phone_number">Введите номер телефона</string>
+    <string name="buttonText">Подтвердить</string>
+
+    <!--Экран верификации-->
+    <string name="verifyTitle">Подтверждение номера</string>
+    <string name="verifyText">Введите код, который мы отправили на ваш номер</string>
+    <string name="verifyHint">Введите код</string>
+    <string name="verifyButton">Подтвердить</string>
+    <string name="verifyResendButton">Dick</string>
+
+</resources>
