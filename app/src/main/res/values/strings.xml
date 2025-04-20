@@ -7,13 +7,17 @@
     <string name="lastNameHint">Фамилия</string>
     <string name="EmailHint">Введите ваш E-mail</string>
     <string name="phone_number">Введите номер телефона</string>
+    <string name="pass">Введите пароль</string>
+    <string name="pass1">Подтвердите пароль</string>
     <string name="buttonText">Подтвердить</string>
+    <string name="loginText">Уже есть аккаунт? Войти</string>
 
-    <!--Экран верификации-->
-    <string name="verifyTitle">Подтверждение номера</string>
-    <string name="verifyText">Введите код, который мы отправили на ваш номер</string>
-    <string name="verifyHint">Введите код</string>
-    <string name="verifyButton">Подтвердить</string>
-    <string name="verifyResendButton">Dick</string>
+    <!--Экран авторизации-->
+    <string name="loginLabel">Экран входа в задницу </string>
+    <string name="loginEmail">Введите почтовый адрес</string>
+    <string name="loginPass">Введите пароль</string>
+    <string name="loginButton">Войти</string>
+    <string name="registerText">Нет аккаунта? Создать</string>
+    <string name="addHackathonButton">Добавить хакатон</string>
 
 </resources>

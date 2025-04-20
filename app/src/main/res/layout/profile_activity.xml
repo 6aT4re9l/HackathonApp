@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/topAppBarProfile"
+        android:layout_width="417dp"
+        android:layout_height="45dp"
+        android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
+        app:navigationIcon="@android:drawable/ic_menu_revert" />
+
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="378dp"
+        android:layout_height="48dp"
+        android:gravity="center"
+        android:text="Личный кабинет"
+        android:textSize="30sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/topAppBarProfile" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="10dp"
+        app:layout_constraintTop_toBottomOf="@+id/textView"
+        tools:layout_editor_absoluteX="-16dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="20dp">
+
+            <TextView
+                android:id="@+id/user_firstName"
+                android:layout_width="0dp"
+                android:layout_height="60dp"
+                android:layout_weight="1"
+                android:textSize="25sp"
+                android:hint="@string/firstNameHint"
+                android:textColor="@color/white"
+                android:padding="8dp"/>
+
+            <TextView
+                android:id="@+id/user_lastName"
+                android:layout_width="0dp"
+                android:layout_height="60dp"
+                android:layout_weight="1"
+                android:textSize="25sp"
+                android:hint="@string/lastNameHint"
+                android:textColor="@color/white"
+                android:textColorHint="@color/hint"
+                android:padding="8dp"
+                android:layout_marginStart="8dp"/>
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/profilePhone"
+            android:layout_width="386dp"
+            android:layout_height="50dp"
+            android:layout_marginTop="8dp"
+            android:textSize="25sp"
+            android:text="Телефон" />
+
+        <TextView
+            android:id="@+id/profileEmail"
+            android:layout_width="match_parent"
+            android:textSize="25sp"
+            android:layout_height="50dp"
+            android:layout_marginTop="8dp"
+            android:text="Почта" />
+    </LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
