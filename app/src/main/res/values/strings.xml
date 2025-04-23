@@ -2,7 +2,7 @@
     <string name="app_name">HackatoonApp</string>
 
     <!--Экран регистрации-->
-    <string name="registerTitle">Регистарция</string>
+    <string name="registerTitle">Регистрация</string>
     <string name="firstNameHint">Имя</string>
     <string name="lastNameHint">Фамилия</string>
     <string name="EmailHint">Введите ваш E-mail</string>
@@ -13,7 +13,7 @@
     <string name="loginText">Уже есть аккаунт? Войти</string>
 
     <!--Экран авторизации-->
-    <string name="loginLabel">Экран входа в задницу </string>
+    <string name="loginLabel">Экран авторизации</string>
     <string name="loginEmail">Введите почтовый адрес</string>
     <string name="loginPass">Введите пароль</string>
     <string name="loginButton">Войти</string>

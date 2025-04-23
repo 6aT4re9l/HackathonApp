@@ -114,6 +114,37 @@ class HackathonAdapter(
         }
     }
 
+    fun showHackathonDialog(context: Context, hackathon: Hackathon) {
+        val imageFile = File(hackathon.imageURL)
+        val dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_hackathon_details, null)
+
+        val imageView = dialogView.findViewById<ImageView>(R.id.dialogImage)
+        val titleView = dialogView.findViewById<TextView>(R.id.dialogTitle)
+        val descView = dialogView.findViewById<TextView>(R.id.dialogDescription)
+        val cityView = dialogView.findViewById<TextView>(R.id.dialogCity)
+        val typeView = dialogView.findViewById<TextView>(R.id.dialogType)
+        val participateButton = dialogView.findViewById<Button>(R.id.buttonParticipate)
+
+        titleView.text = hackathon.title
+        descView.text = "Описание: ${hackathon.description}"
+        cityView.text = "Город: ${hackathon.city}"
+        typeView.text = "Тип: ${hackathon.type}"
+
+        if (imageFile.exists()) {
+            Glide.with(context).load(imageFile).into(imageView)
+        } else {
+            imageView.setImageResource(R.drawable.placeholder)
+        }
+
+        participateButton.visibility = View.GONE // отключаем кнопку "Участвовать"
+
+        AlertDialog.Builder(context)
+            .setView(dialogView)
+            .setPositiveButton("ОК", null)
+            .show()
+    }
+
+
     private fun submitApplication(context: Context, hackathonId: String, hackathonTitle: String) {
         val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
         val db = FirebaseFirestore.getInstance()

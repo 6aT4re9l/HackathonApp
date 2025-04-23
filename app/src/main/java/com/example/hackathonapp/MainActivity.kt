@@ -257,7 +257,7 @@ class MainActivity : AppCompatActivity() {
                     "city" to city,
                     "prizeFund" to prizeFund,
                     "type" to type,
-                    "imageUrl" to newImagePath
+                    "imageURL" to newImagePath
                 )
 
                 db.collection("hackathons").document(hackathon.id).update(updated)
@@ -277,7 +277,7 @@ class MainActivity : AppCompatActivity() {
         dialog.show()
     }
 
-    private fun saveHackathonToFirestore(title: String, description: String, city: String, prizeFund: Int, type: String, imageUrl: String) {
+    private fun saveHackathonToFirestore(title: String, description: String, city: String, prizeFund: Int, type: String, imageURL: String) {
         val newDocRef = db.collection("hackathons").document()
         val hackathon = hashMapOf(
             "id" to newDocRef.id,
@@ -286,7 +286,7 @@ class MainActivity : AppCompatActivity() {
             "city" to city,
             "prizeFund" to prizeFund,
             "type" to type,
-            "imageUrl" to imageUrl
+            "imageURL" to imageURL
         )
 
         newDocRef.set(hackathon)
