@@ -7,5 +7,8 @@ data class Hackathon(
     val imageURL: String = "",
     val city: String = "",
     val type: String = "",
-    val prizeFund: Int = 0
+    val prizeFund: Int = 0,
+    val address: String = "",
+    val latitude: Double? = null,
+    val longitude: Double? = null
 )

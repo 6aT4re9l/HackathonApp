@@ -8,6 +8,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.*
+import android.app.Activity
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
@@ -17,9 +18,10 @@ import com.example.hackathonapp.databinding.ActivityMainBinding
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
+import com.yandex.mapkit.MapKitFactory
+import com.yandex.mapkit.mapview.MapView
 import java.io.File
 import java.io.FileOutputStream
-import java.util.*
 
 class MainActivity : AppCompatActivity() {
     private lateinit var hackathonAdapter: HackathonAdapter
@@ -28,6 +30,12 @@ class MainActivity : AppCompatActivity() {
     private var selectedImageUri: Uri? = null
     private var imageViewPreviewDialog: ImageView? = null
     private var isAdmin = false
+    private var selectedLatitude: Double? = null
+    private var selectedLongitude: Double? = null
+    private var selectedAddress: String? = null
+    private val REQUEST_SELECT_ADDRESS = 1001
+    private var locationTextViewInDialog: TextView? = null
+
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -110,6 +118,11 @@ class MainActivity : AppCompatActivity() {
         val editPrizeFund = dialogView.findViewById<EditText>(R.id.editPrizeFund)
         val spinnerType = dialogView.findViewById<Spinner>(R.id.spinnerType)
         val buttonSelectImage = dialogView.findViewById<Button>(R.id.buttonSelectImage)
+        val buttonSelectLocation = dialogView.findViewById<Button>(R.id.buttonSelectLocation)
+        val locationTextView = dialogView.findViewById<TextView>(R.id.locationTextView)
+        locationTextViewInDialog = locationTextView
+        updateLocationTextInDialog()
+
         imageViewPreviewDialog = dialogView.findViewById(R.id.imageViewPreview)
         editCity.setAdapter(cityAdapter)
         val hackathonTypes = listOf("Онлайн", "Офлайн", "Гибрид")
@@ -119,7 +132,18 @@ class MainActivity : AppCompatActivity() {
         buttonSelectImage.setOnClickListener {
             openGallery()
         }
+        buttonSelectLocation.setOnClickListener {
+            val intent = Intent(this, SelectAddressActivity::class.java).apply {
+                putExtra("address", selectedAddress)
+                putExtra("latitude", selectedLatitude)
+                putExtra("longitude", selectedLongitude)
+            }
+            startActivityForResult(intent, REQUEST_SELECT_ADDRESS)
+        }
 
+        if (selectedLatitude != null && selectedLongitude != null) {
+            locationTextView.text = "Выбрано место: $selectedLatitude, $selectedLongitude"
+        }
 
         val dialog = AlertDialog.Builder(this)
             .setTitle("Добавить хакатон")
@@ -200,6 +224,7 @@ class MainActivity : AppCompatActivity() {
                 Toast.makeText(this, "Ошибка при удалении", Toast.LENGTH_SHORT).show()
             }
     }
+
     private fun showEditHackathonDialog(hackathon: Hackathon) {
         val dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_add_hackathon, null)
         val editTitle = dialogView.findViewById<EditText>(R.id.editTitle)
@@ -286,7 +311,10 @@ class MainActivity : AppCompatActivity() {
             "city" to city,
             "prizeFund" to prizeFund,
             "type" to type,
-            "imageURL" to imageURL
+            "imageURL" to imageURL,
+            "address" to selectedAddress,
+            "latitude" to selectedLatitude,
+            "longitude" to selectedLongitude
         )
 
         newDocRef.set(hackathon)
@@ -302,7 +330,6 @@ class MainActivity : AppCompatActivity() {
     private fun updateUIByRole() {
         binding.fabAddHackathon.visibility = if (isAdmin) View.VISIBLE else View.GONE
     }
-
 
     private fun fetchUserRole() {
         val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
@@ -328,6 +355,23 @@ class MainActivity : AppCompatActivity() {
                 loadHackathons(null, null) // 🔽 перемещено сюда
             }
 
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == REQUEST_SELECT_ADDRESS && resultCode == Activity.RESULT_OK) {
+            selectedLatitude = data?.getDoubleExtra("latitude", 0.0)
+            selectedLongitude = data?.getDoubleExtra("longitude", 0.0)
+            selectedAddress = data?.getStringExtra("address")
+            locationTextViewInDialog?.text = selectedAddress ?: "Местоположение не выбрано"
+        }
+    }
+
+    private fun updateLocationTextInDialog() {
+        locationTextViewInDialog?.text = if (selectedLatitude != null && selectedLongitude != null)
+            "Выбрано место: ${"%.5f".format(selectedLatitude)}, ${"%.5f".format(selectedLongitude)}"
+        else
+            "Местоположение не выбрано"
     }
 
 

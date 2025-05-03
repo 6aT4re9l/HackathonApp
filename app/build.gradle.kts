@@ -2,6 +2,7 @@ plugins {
     id("com.android.application")
     alias(libs.plugins.kotlin.android)
     id("com.google.gms.google-services")
+    id ("kotlin-parcelize")
 }
 
 android {
@@ -70,4 +71,9 @@ dependencies {
     implementation ("com.google.android.gms:play-services-auth:20.7.0")
     implementation ("com.github.bumptech.glide:glide:4.16.0")
     implementation("com.google.firebase:firebase-storage-ktx:20.3.0")
+
+
+    implementation("com.squareup.okhttp3:okhttp:4.11.0")
+    implementation("com.yandex.android:maps.mobile:4.3.1-full")
+
 }

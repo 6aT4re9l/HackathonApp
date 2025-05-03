@@ -1,7 +1,10 @@
 package com.example.hackathonapp
 
+import android.annotation.SuppressLint
 import android.app.AlertDialog
+import com.yandex.mapkit.geometry.Point
 import android.os.Bundle
+import android.os.Parcelable
 import android.view.LayoutInflater
 import android.view.View
 import java.io.File
@@ -18,6 +21,9 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.yandex.mapkit.map.CameraPosition
+import com.yandex.mapkit.mapview.MapView
+import kotlinx.parcelize.Parcelize
 
 class MyApplicationsActivity : AppCompatActivity() {
 
@@ -58,11 +64,17 @@ class MyApplicationsActivity : AppCompatActivity() {
             }
     }
 
+    @Parcelize
     data class ApplicationInfo(
         val hackathonId: String = "",
         val hackathonTitle: String = "",
-        val status: String = ""
-    )
+        val status: String = "",
+        val userId: String = "",
+        var firstName: String = "",
+        var lastName: String = "",
+        var phoneNumber: String = "",
+        var email: String = ""
+    ): Parcelable
 
     class ApplicationAdapter(
         private val onClick: (ApplicationInfo) -> Unit,
@@ -151,6 +163,7 @@ class MyApplicationsActivity : AppCompatActivity() {
 
 
     // При нажатии на заявку, открывается карточка хакатона
+    @SuppressLint("SetTextI18n")
     private fun showHackathonDetails(hackathonId: String) {
         val db = FirebaseFirestore.getInstance()
         db.collection("hackathons").document(hackathonId).get()
@@ -163,6 +176,7 @@ class MyApplicationsActivity : AppCompatActivity() {
                 val cityView = dialogView.findViewById<TextView>(R.id.dialogCity)
                 val typeView = dialogView.findViewById<TextView>(R.id.dialogType)
                 val imageView = dialogView.findViewById<ImageView>(R.id.dialogImage)
+                val mapView = dialogView.findViewById<MapView>(R.id.mapView)
 
                 titleView.text = hackathon.title
                 descView.text = "Описание: ${hackathon.description}"
@@ -175,7 +189,15 @@ class MyApplicationsActivity : AppCompatActivity() {
                 } else {
                     imageView.setImageResource(R.drawable.placeholder)
                 }
-
+                if (hackathon.latitude != null && hackathon.longitude != null) {
+                    val location = Point(hackathon.latitude!!, hackathon.longitude!!)
+                    mapView.map.move(
+                        CameraPosition(location, 15.0f, 0.0f, 0.0f)
+                    )
+                    mapView.map.mapObjects.addPlacemark(location)
+                } else {
+                    mapView.visibility = View.GONE
+                }
                 androidx.appcompat.app.AlertDialog.Builder(this)
                     .setView(dialogView)
                     .setPositiveButton("ОК", null)

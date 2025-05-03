@@ -15,10 +15,15 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.HackathonApp"
-        tools:targetApi="31">
+        tools:targetApi="31"
+        android:name=".MapKid">
+        <meta-data
+            android:name="com.yandex.maps.apikey"
+            android:value="e7411f17-9e36-4296-b738-87a5b73c9a6e"/>
         <activity android:name=".MainActivity" />
         <activity android:name=".MyApplicationsActivity" />
         <activity android:name=".ProfileActivity"/>
+        <activity android:name=".SelectAddressActivity"/>
         <activity android:name=".RegisterActivity" />
         <activity android:name=".LoginActivity"
             android:exported="true">

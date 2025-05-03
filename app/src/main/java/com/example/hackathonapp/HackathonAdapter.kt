@@ -1,6 +1,8 @@
 package com.example.hackathonapp
 
+import android.annotation.SuppressLint
 import android.content.Context
+import android.graphics.Point
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,7 +17,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.FieldValue
+import com.yandex.mapkit.MapKitFactory
+import com.yandex.mapkit.map.CameraPosition
+import com.yandex.mapkit.mapview.MapView
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -29,17 +33,19 @@ class HackathonAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): HackathonViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.item_hackathon, parent, false)
-        return HackathonViewHolder(view)
+        return HackathonViewHolder(view, parent.context)
     }
+
 
     override fun onBindViewHolder(holder: HackathonViewHolder, position: Int) {
         holder.bind(getItem(position))
     }
 
-    inner class HackathonViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+    inner class HackathonViewHolder(view: View, private val context: Context) : RecyclerView.ViewHolder(view) {
         private val title: TextView = view.findViewById(R.id.hackathonTitle)
         private val image: ImageView = view.findViewById(R.id.hackathonImage)
 
+        @SuppressLint("SetTextI18n")
         fun bind(hackathon: Hackathon) {
             title.text = hackathon.title
             val imageFile = File(hackathon.imageURL)
@@ -50,70 +56,47 @@ class HackathonAdapter(
             }
 
             itemView.setOnClickListener {
-                val context = itemView.context
                 val dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_hackathon_details, null)
+                val dialogBuilder = AlertDialog.Builder(context).setView(dialogView)
 
-                val imageView = dialogView.findViewById<ImageView>(R.id.dialogImage)
-                val titleView = dialogView.findViewById<TextView>(R.id.dialogTitle)
-                val descView = dialogView.findViewById<TextView>(R.id.dialogDescription)
-                val cityView = dialogView.findViewById<TextView>(R.id.dialogCity)
-                val typeView = dialogView.findViewById<TextView>(R.id.dialogType)
-                val participateButton = dialogView.findViewById<Button>(R.id.buttonParticipate)
+                val titleTextView = dialogView.findViewById<TextView>(R.id.dialogTitle)
+                val descriptionTextView = dialogView.findViewById<TextView>(R.id.dialogDescription)
+                val cityTextView = dialogView.findViewById<TextView>(R.id.dialogCity)
+                val addressTextView = dialogView.findViewById<TextView>(R.id.dialogAddress)
+                val mapView = dialogView.findViewById<MapView>(R.id.mapView)
 
-                titleView.text = hackathon.title
-                descView.text = "Описание: ${hackathon.description}"
-                cityView.text = "Город: ${hackathon.city}"
-                typeView.text = "Тип: ${hackathon.type}"
+                titleTextView.text = hackathon.title
+                descriptionTextView.text = hackathon.description
+                cityTextView.text = hackathon.city
+                addressTextView.text = hackathon.address.ifBlank { "Адрес не указан" }
 
-                if (imageFile.exists()) {
-                    Glide.with(context).load(imageFile).into(imageView)
+                if (hackathon.latitude != null && hackathon.longitude != null) {
+                    val point = com.yandex.mapkit.geometry.Point(hackathon.latitude, hackathon.longitude)
+                    mapView.map.move(CameraPosition(point, 15.0f, 0.0f, 0.0f))
+                    mapView.map.mapObjects.addPlacemark(point)
                 } else {
-                    imageView.setImageResource(R.drawable.placeholder)
+                    mapView.visibility = View.GONE
                 }
 
-                if (!isAdmin) {
-                    val userId = FirebaseAuth.getInstance().currentUser?.uid
+                val dialog = dialogBuilder.create()
 
-                    val participateButton = dialogView.findViewById<Button>(R.id.buttonParticipate)
-                    participateButton.visibility = View.VISIBLE
-
-                    FirebaseFirestore.getInstance()
-                        .collection("applications")
-                        .document("${hackathon.id}-$userId")
-                        .get()
-                        .addOnSuccessListener { doc ->
-                            val status = doc.getString("status")
-                            if (status == "pending" || status == "approved") {
-                                participateButton.isEnabled = false
-                                participateButton.text = "Заявка отправлена"
-                            } else {
-                                participateButton.isEnabled = true
-                                participateButton.setOnClickListener {
-                                    participateButton.isEnabled = false
-                                    submitApplication(itemView.context, hackathon.id, hackathon.title)
-                                    participateButton.text = "Заявка отправлена"
-                                }
-                            }
-                        }
+                dialog.setOnShowListener {
+                    MapKitFactory.getInstance().onStart()
+                    mapView.onStart()
                 }
 
-                val dialogBuilder = AlertDialog.Builder(context)
-                    .setView(dialogView)
-
-                if (isAdmin) {
-                    dialogBuilder
-                        .setPositiveButton("Редактировать") { _, _ -> onEdit(hackathon) }
-                        .setNegativeButton("Удалить") { _, _ -> onDelete(hackathon) }
-                        .setNeutralButton("ОК", null)
-                } else {
-                    dialogBuilder.setPositiveButton("ОК", null)
+                dialog.setOnDismissListener {
+                    mapView.onStop()
+                    MapKitFactory.getInstance().onStop()
                 }
 
-                dialogBuilder.create().show()
+                dialog.show()
             }
+
         }
     }
 
+    @SuppressLint("SetTextI18n")
     fun showHackathonDialog(context: Context, hackathon: Hackathon) {
         val imageFile = File(hackathon.imageURL)
         val dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_hackathon_details, null)
@@ -124,17 +107,29 @@ class HackathonAdapter(
         val cityView = dialogView.findViewById<TextView>(R.id.dialogCity)
         val typeView = dialogView.findViewById<TextView>(R.id.dialogType)
         val participateButton = dialogView.findViewById<Button>(R.id.buttonParticipate)
+        val addressTextView = dialogView.findViewById<TextView>(R.id.dialogAddress)
+        val mapView = dialogView.findViewById<MapView>(R.id.mapView)
 
         titleView.text = hackathon.title
         descView.text = "Описание: ${hackathon.description}"
         cityView.text = "Город: ${hackathon.city}"
         typeView.text = "Тип: ${hackathon.type}"
+        addressTextView.text = hackathon.address.ifBlank { "Адрес не указан" }
 
         if (imageFile.exists()) {
             Glide.with(context).load(imageFile).into(imageView)
         } else {
             imageView.setImageResource(R.drawable.placeholder)
         }
+
+        if (hackathon.latitude != null && hackathon.longitude != null) {
+            val point = com.yandex.mapkit.geometry.Point(hackathon.latitude!!, hackathon.longitude!!)
+            mapView.map.move(CameraPosition(point, 15.0f, 0.0f, 0.0f))
+            mapView.map.mapObjects.addPlacemark(point)
+        } else {
+            mapView.visibility = View.GONE
+        }
+
 
         participateButton.visibility = View.GONE // отключаем кнопку "Участвовать"
 

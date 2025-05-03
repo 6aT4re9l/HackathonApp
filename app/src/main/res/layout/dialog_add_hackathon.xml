@@ -43,6 +43,21 @@
         android:layout_height="wrap_content"
         android:text="Выбрать изображение"/>
 
+    <TextView
+        android:id="@+id/locationTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Местоположение не выбрано"
+        android:textSize="16sp"
+        android:textColor="#666666"
+        android:layout_marginTop="8dp"/>
+
+    <Button
+        android:id="@+id/buttonSelectLocation"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Выбрать место проведения"/>
+
     <ImageView
         android:id="@+id/imageViewPreview"
         android:layout_width="match_parent"

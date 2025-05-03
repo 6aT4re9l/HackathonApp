@@ -61,10 +61,10 @@
         android:text="Мои заявки на хакатоны"
         android:textStyle="bold"
         android:textSize="20sp"
-        app:layout_constraintTop_toBottomOf="@id/profileEmail"
-        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="24dp"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="24dp" />
+        app:layout_constraintTop_toBottomOf="@id/profileEmail"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
         android:id="@+id/emptyListMessage"
@@ -74,16 +74,16 @@
         android:visibility="gone"
         android:textSize="16sp"
         android:textColor="@android:color/darker_gray"
+        android:layout_marginTop="8dp"
         app:layout_constraintTop_toBottomOf="@id/applicationsTitle"
-        app:layout_constraintStart_toStartOf="@id/applicationsTitle"
-        android:layout_marginTop="8dp" />
+        app:layout_constraintStart_toStartOf="@id/applicationsTitle" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerViewApplications"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:padding="8dp"
-        app:layout_constraintTop_toBottomOf="@id/applicationsTitle"
+        app:layout_constraintTop_toBottomOf="@id/emptyListMessage"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
